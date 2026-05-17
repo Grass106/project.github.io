@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Precision Liquid Dispensing — Anna</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --cream: #FAF8F3;
+      --ink: #1A1814;
+      --muted: #6B6760;
+      --accent: #C4794A;
+      --border: #E2DDD6;
+      --card: #F3F0EA;
+      --placeholder: #EDEAE3;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--ink); font-size: 16px; line-height: 1.7; }
+
+    /* NAV */
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; justify-content: space-between; align-items: center; padding: 1.25rem 3rem; background: rgba(250,248,243,0.92); backdrop-filter: blur(8px); border-bottom: 1px solid var(--border); }
+    .nav-logo { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; font-weight: 300; letter-spacing: 0.04em; color: var(--ink); text-decoration: none; }
+    .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+    .nav-links a { text-decoration: none; font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); transition: color 0.2s; }
+    .nav-links a:hover { color: var(--ink); }
+
+    /* HERO */
+    .hero { min-height: 100vh; display: flex; flex-direction: column; justify-content: flex-end; padding: 8rem 3rem 4rem; border-bottom: 1px solid var(--border); position: relative; overflow: hidden; }
+    .hero-tag { font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 1.5rem; opacity: 0; animation: fadeUp 0.7s ease 0.1s forwards; }
+    .hero h1 { font-family: 'Cormorant Garamond', serif; font-size: clamp(3rem, 8vw, 6.5rem); font-weight: 300; line-height: 1.0; max-width: 900px; margin-bottom: 2rem; opacity: 0; animation: fadeUp 0.7s ease 0.3s forwards; }
+    .hero h1 em { font-style: italic; color: var(--accent); }
+    .hero-meta { display: flex; gap: 4rem; opacity: 0; animation: fadeUp 0.7s ease 0.5s forwards; }
+    .hero-meta-item { }
+    .hero-meta-label { font-size: 0.68rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); display: block; margin-bottom: 0.2rem; }
+    .hero-meta-value { font-size: 0.9rem; color: var(--ink); }
+    .hero-scroll { position: absolute; bottom: 3rem; right: 3rem; font-size: 0.72rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); display: flex; align-items: center; gap: 0.5rem; opacity: 0; animation: fadeUp 0.7s ease 0.7s forwards; }
+    .hero-scroll::after { content: '↓'; }
+
+    /* SECTION BASE */
+    .section { padding: 6rem 3rem; max-width: 1100px; margin: 0 auto; }
+    .section-divider { border: none; border-top: 1px solid var(--border); margin: 0; }
+    .section-label { font-size: 0.68rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--accent); margin-bottom: 1rem; display: block; }
+    .section-num { font-family: 'Cormorant Garamond', serif; font-size: 0.85rem; color: var(--border); font-style: italic; float: right; }
+
+    /* TWO-COL */
+    .two-col { display: grid; grid-template-columns: 1fr 1.6fr; gap: 6rem; align-items: start; }
+    .two-col-tight { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; }
+
+    h2 { font-family: 'Cormorant Garamond', serif; font-size: clamp(2rem, 3.5vw, 2.8rem); font-weight: 300; line-height: 1.15; margin-bottom: 1.5rem; }
+    h2 em { font-style: italic; color: var(--accent); }
+    p { color: var(--muted); font-weight: 300; margin-bottom: 1.25rem; font-size: 0.95rem; }
+    p:last-child { margin-bottom: 0; }
+
+    /* QUOTE */
+    .quote-block { border-left: 2px solid var(--accent); padding: 1rem 0 1rem 1.75rem; margin: 2rem 0; }
+    .quote-block blockquote { font-family: 'Cormorant Garamond', serif; font-size: 1.35rem; font-weight: 300; font-style: italic; color: var(--ink); line-height: 1.4; margin-bottom: 0.5rem; }
+    .quote-block cite { font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+
+    /* RESEARCH CARDS */
+    .interviewee-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; margin-top: 2rem; }
+    .interviewee-card { background: var(--card); border: 1px solid var(--border); padding: 1.75rem; }
+    .interviewee-initial { width: 40px; height: 40px; border-radius: 50%; background: var(--cream); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; color: var(--accent); margin-bottom: 1rem; }
+    .interviewee-name { font-size: 0.85rem; font-weight: 500; color: var(--ink); margin-bottom: 0.2rem; }
+    .interviewee-role { font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 1rem; display: block; }
+    .interviewee-card p { font-size: 0.85rem; }
+
+    /* FINDINGS */
+    .findings-list { margin-top: 2rem; }
+    .finding { display: flex; gap: 1.5rem; padding: 1.5rem 0; border-bottom: 1px solid var(--border); align-items: start; }
+    .finding:first-child { border-top: 1px solid var(--border); }
+    .finding-num { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; color: var(--border); min-width: 2rem; font-style: italic; padding-top: 0.1rem; }
+    .finding-text { font-size: 0.9rem; color: var(--muted); font-weight: 300; }
+    .finding-text strong { color: var(--ink); font-weight: 500; display: block; margin-bottom: 0.25rem; font-size: 0.85rem; letter-spacing: 0.05em; }
+
+    /* SOLUTION FEATURES */
+    .features-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.25rem; margin-top: 2rem; }
+    .feature { background: var(--card); border: 1px solid var(--border); padding: 1.75rem; }
+    .feature-icon { font-size: 1.4rem; margin-bottom: 0.75rem; }
+    .feature h4 { font-size: 0.85rem; font-weight: 500; color: var(--ink); margin-bottom: 0.4rem; letter-spacing: 0.03em; }
+    .feature p { font-size: 0.83rem; }
+
+    /* PRINCIPLES */
+    .principles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; border: 1px solid var(--border); margin-top: 2rem; }
+    .principle { padding: 2.5rem 2rem; border-right: 1px solid var(--border); }
+    .principle:last-child { border-right: none; }
+    .principle-num { font-family: 'Cormorant Garamond', serif; font-size: 2.5rem; font-weight: 300; color: var(--border); display: block; margin-bottom: 0.5rem; }
+    .principle h4 { font-size: 0.85rem; font-weight: 500; color: var(--ink); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 0.75rem; }
+    .principle p { font-size: 0.85rem; }
+
+    /* PLACEHOLDER IMAGE */
+    .img-placeholder { width: 100%; background: var(--placeholder); border: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.75rem; }
+    .img-placeholder svg { width: 28px; height: 28px; stroke: #C8C3BC; stroke-width: 1.5; fill: none; }
+    .img-placeholder span { font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase; color: #C8C3BC; }
+    .img-tall { aspect-ratio: 3/4; }
+    .img-wide { aspect-ratio: 16/9; }
+    .img-square { aspect-ratio: 1/1; }
+
+    /* PROTOTYPE */
+    .prototype-status { display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); margin-bottom: 1.5rem; }
+    .status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); animation: pulse 2s ease infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+    .prototype-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; margin-top: 2.5rem; }
+    .proto-card { }
+    .proto-card .img-placeholder { aspect-ratio: 4/3; margin-bottom: 1rem; }
+    .proto-card-label { font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.2rem; display: block; }
+    .proto-card-title { font-size: 0.9rem; color: var(--ink); }
+
+    /* ABOUT + CONTACT */
+    .bottom-row { display: grid; grid-template-columns: 1fr 1fr; border-top: 1px solid var(--border); }
+    .bottom-block { padding: 4rem 3rem; border-right: 1px solid var(--border); }
+    .bottom-block:last-child { border-right: none; }
+    .bottom-block h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; font-weight: 300; line-height: 1.2; margin-bottom: 1rem; }
+    .bottom-block h3 em { font-style: italic; color: var(--accent); }
+
+    .btn { text-decoration: none; font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.75rem 1.75rem; border: 1px solid var(--ink); color: var(--ink); display: inline-block; transition: all 0.25s; margin-top: 1.5rem; margin-right: 0.75rem; }
+    .btn:hover { background: var(--ink); color: var(--cream); }
+    .btn-ghost { border-color: var(--border); color: var(--muted); }
+    .btn-ghost:hover { background: transparent; border-color: var(--ink); color: var(--ink); }
+
+    footer { border-top: 1px solid var(--border); padding: 1.5rem 3rem; display: flex; justify-content: space-between; font-size: 0.78rem; color: var(--muted); }
+
+    /* ANIMATE */
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .fade-in { opacity: 0; transform: translateY(16px); transition: opacity 0.65s ease, transform 0.65s ease; }
+    .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+    /* MOBILE */
+    @media (max-width: 768px) {
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { gap: 1.5rem; }
+      .hero { padding: 7rem 1.5rem 3rem; }
+      .hero-meta { flex-direction: column; gap: 1rem; }
+      .section { padding: 4rem 1.5rem; }
+      .two-col, .two-col-tight { grid-template-columns: 1fr; gap: 2.5rem; }
+      .interviewee-grid, .prototype-grid { grid-template-columns: 1fr; }
+      .features-grid { grid-template-columns: 1fr; }
+      .principles { grid-template-columns: 1fr; }
+      .principle { border-right: none; border-bottom: 1px solid var(--border); }
+      .principle:last-child { border-bottom: none; }
+      .bottom-row { grid-template-columns: 1fr; }
+      .bottom-block { border-right: none; border-bottom: 1px solid var(--border); padding: 2.5rem 1.5rem; }
+      footer { flex-direction: column; gap: 0.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a class="nav-logo" href="#">Anna — Design Project</a>
+    <ul class="nav-links">
+      <li><a href="#problem">Problem</a></li>
+      <li><a href="#research">Research</a></li>
+      <li><a href="#solution">Solution</a></li>
+      <li><a href="#prototype">Prototype</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero">
+    <p class="hero-tag">Assistive Technology — Design Research & Prototype</p>
+    <h1>Precise liquid control<br />for <em>visually impaired</em><br />users.</h1>
+    <div class="hero-meta">
+      <div class="hero-meta-item">
+        <span class="hero-meta-label">Project Type</span>
+        <span class="hero-meta-value">Research + Physical Prototype</span>
+      </div>
+      <div class="hero-meta-item">
+        <span class="hero-meta-label">Status</span>
+        <span class="hero-meta-value">In Development</span>
+      </div>
+      <div class="hero-meta-item">
+        <span class="hero-meta-label">Designer</span>
+        <span class="hero-meta-value">Anna</span>
+      </div>
+    </div>
+    <span class="hero-scroll">Scroll to explore</span>
+  </div>
+
+  <!-- PROBLEM -->
+  <hr class="section-divider" />
+  <div class="section" id="problem">
+    <div class="two-col fade-in">
+      <div>
+        <span class="section-label">01 — The Problem</span>
+        <h2>A gap in<br /><em>everyday trust.</em></h2>
+      </div>
+      <div>
+        <p>Many existing assistive technologies can provide information — but they're often difficult to use reliably in daily life. Some produce too much unnecessary output. Others aren't precise enough to build real confidence.</p>
+        <div class="quote-block">
+          <blockquote>"The tools exist, but trusting them in the moment is a different thing entirely."</blockquote>
+          <cite>Composite insight from user interviews</cite>
+        </div>
+        <p>One of the strongest and most consistent findings across all interviews involved liquid handling — pouring, measuring, and managing liquids accurately in everyday situations. Current solutions like measuring cups or touch-based estimation are unreliable and still require users to interpret information themselves.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESEARCH -->
+  <hr class="section-divider" />
+  <div class="section" id="research">
+    <span class="section-label fade-in">02 — Research</span>
+    <h2 class="fade-in">Who we<br /><em>listened to.</em></h2>
+
+    <div class="interviewee-grid">
+      <div class="interviewee-card fade-in">
+        <div class="interviewee-initial">J</div>
+        <p class="interviewee-name">Jane</p>
+        <span class="interviewee-role">Rehabilitation Therapist, 20+ yrs</span>
+        <p>Provided professional insight into daily challenges faced by visually impaired individuals and the gaps in current assistive tools.</p>
+      </div>
+      <div class="interviewee-card fade-in">
+        <div class="interviewee-initial">B</div>
+        <p class="interviewee-name">Beverly</p>
+        <span class="interviewee-role">Visually Impaired Massage Therapist</span>
+        <p>Shared firsthand experience navigating daily tasks, including the frustrations of handling liquids and managing precise amounts.</p>
+      </div>
+      <div class="interviewee-card fade-in">
+        <div class="interviewee-initial">D</div>
+        <p class="interviewee-name">Dr. Dong</p>
+        <span class="interviewee-role">Medical Professional & Blind Association Chair</span>
+        <p>Offered both medical and community-level perspective on the importance of reliable, simple assistive devices for independent living.</p>
+      </div>
+    </div>
+
+    <div class="findings-list" style="margin-top: 3.5rem;">
+      <h3 style="font-family:'Cormorant Garamond',serif; font-weight:300; font-size:1.4rem; margin-bottom:0.5rem;" class="fade-in">Key findings</h3>
+      <div class="finding fade-in">
+        <span class="finding-num">01</span>
+        <p class="finding-text"><strong>Information overload</strong>Many tools produce too much unnecessary feedback, making them hard to use in the moment rather than helpful.</p>
+      </div>
+      <div class="finding fade-in">
+        <span class="finding-num">02</span>
+        <p class="finding-text"><strong>Audio interference</strong>Hearing is critical for navigation and safety. Audio-based feedback systems can disrupt environmental awareness.</p>
+      </div>
+      <div class="finding fade-in">
+        <span class="finding-num">03</span>
+        <p class="finding-text"><strong>Liquid handling is the clearest pain point</strong>Pouring, measuring, and managing liquid medication accurately came up across every interview as a consistent, unsolved problem.</p>
+      </div>
+      <div class="finding fade-in">
+        <span class="finding-num">04</span>
+        <p class="finding-text"><strong>Simplicity beats sophistication</strong>Participants consistently valued reliability and ease over advanced features. Trust is built through consistency, not complexity.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SOLUTION -->
+  <hr class="section-divider" />
+  <div class="section" id="solution">
+    <div class="two-col fade-in" style="margin-bottom: 4rem;">
+      <div>
+        <span class="section-label">03 — The Solution</span>
+        <h2>One action.<br /><em>One precise amount.</em></h2>
+      </div>
+      <div>
+        <p>Instead of helping users estimate or measure liquids manually, the design shifted to direct liquid output control. The device automatically dispenses a fixed, precise amount of liquid — removing the need for any interpretation or judgment from the user.</p>
+        <p>Inspired by the familiar squeeze of a medicine bottle, the interaction is immediate and intuitive. No displays, no audio distractions, no guesswork.</p>
+      </div>
+    </div>
+
+    <div class="features-grid">
+      <div class="feature fade-in">
+        <div class="feature-icon">◎</div>
+        <h4>Precise Fixed Output</h4>
+        <p>Dispenses exact amounts — 5ml or 10ml — automatically stopping after each dose. No measuring required.</p>
+      </div>
+      <div class="feature fade-in">
+        <div class="feature-icon">◈</div>
+        <h4>Squeeze Interaction</h4>
+        <p>Modeled on the familiar feel of a medicine bottle — one squeeze, one dose. Instantly learnable.</p>
+      </div>
+      <div class="feature fade-in">
+        <div class="feature-icon">◉</div>
+        <h4>Spill Prevention</h4>
+        <p>Vibration alerts notify the user when the receiving container is close to full — before any spill occurs.</p>
+      </div>
+      <div class="feature fade-in">
+        <div class="feature-icon">◐</div>
+        <h4>Non-Audio Feedback</h4>
+        <p>No sounds. Feedback is tactile only, preserving the user's ability to hear their environment clearly.</p>
+      </div>
+      <div class="feature fade-in">
+        <div class="feature-icon">◑</div>
+        <h4>Locking Mechanism</h4>
+        <p>Prevents accidental activation — the device only dispenses when intentionally triggered.</p>
+      </div>
+      <div class="feature fade-in">
+        <div class="feature-icon">◒</div>
+        <h4>Consistent Output</h4>
+        <p>Every dispense is identical. Reliability builds trust — users always know exactly what they're getting.</p>
+      </div>
+    </div>
+
+    <div class="principles fade-in" style="margin-top:3.5rem;">
+      <div class="principle">
+        <span class="principle-num">I</span>
+        <h4>Minimal</h4>
+        <p>Avoid unnecessary complexity. Every feature must earn its place. If it doesn't help, it doesn't belong.</p>
+      </div>
+      <div class="principle">
+        <span class="principle-num">II</span>
+        <h4>Precise</h4>
+        <p>Exact, repeatable liquid control every time. Precision is the whole point — it cannot be compromised.</p>
+      </div>
+      <div class="principle">
+        <span class="principle-num">III</span>
+        <h4>Reliable</h4>
+        <p>Users should be able to reach for this device without thinking twice. Trust is built through consistency.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROTOTYPE -->
+  <hr class="section-divider" />
+  <div class="section" id="prototype">
+    <span class="section-label fade-in">04 — Prototype</span>
+    <div class="two-col fade-in" style="margin-bottom:2rem;">
+      <div>
+        <div class="prototype-status"><span class="status-dot"></span> In Development</div>
+        <h2>The build<br /><em>in progress.</em></h2>
+      </div>
+      <div>
+        <p>The physical prototype is currently being developed. This section will be updated with sketches, renders, and build photos as the project progresses. Check back as the device takes shape.</p>
+        <p>The goal is a functional prototype that can be tested with real users — validating whether the simplicity of the design holds up in practice.</p>
+      </div>
+    </div>
+
+    <div class="prototype-grid">
+      <div class="proto-card fade-in">
+        <div class="img-placeholder" style="aspect-ratio:4/3;">
+          <svg viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+          <span>Early sketches — coming soon</span>
+        </div>
+        <span class="proto-card-label">Stage 01</span>
+        <span class="proto-card-title">Initial Sketches & Ideation</span>
+      </div>
+      <div class="proto-card fade-in">
+        <div class="img-placeholder" style="aspect-ratio:4/3;">
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+          <span>3D model — coming soon</span>
+        </div>
+        <span class="proto-card-label">Stage 02</span>
+        <span class="proto-card-title">CAD / 3D Modelling</span>
+      </div>
+      <div class="proto-card fade-in">
+        <div class="img-placeholder" style="aspect-ratio:4/3;">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 3"/></svg>
+          <span>Build photos — coming soon</span>
+        </div>
+        <span class="proto-card-label">Stage 03</span>
+        <span class="proto-card-title">Physical Build & Testing</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ABOUT + CONTACT -->
+  <div class="bottom-row">
+    <div class="bottom-block fade-in">
+      <span class="section-label">About</span>
+      <h3>Designed by<br /><em>Anna.</em></h3>
+      <p style="color:var(--muted); font-weight:300; font-size:0.9rem;">This project was developed through user research and interviews with visually impaired individuals and professionals. The goal: design something simple enough to trust, and precise enough to matter.</p>
+    </div>
+    <div class="bottom-block fade-in" id="contact">
+      <span class="section-label">Contact</span>
+      <h3>Questions or<br /><em>collaborations?</em></h3>
+      <p style="color:var(--muted); font-weight:300; font-size:0.9rem;">Interested in the project, want to give feedback, or just want to connect? I'd love to hear from you.</p>
+      <a href="mailto:your@email.com" class="btn">Email Me</a>
+      <a href="https://instagram.com/yourusername" class="btn btn-ghost" target="_blank">Instagram</a>
+    </div>
+  </div>
+
+  <footer>
+    <span>© 2026 Anna</span>
+    <span>Prototype in progress ✦</span>
+  </footer>
+
+  <script>
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((e, i) => {
+        if (e.isIntersecting) {
+          setTimeout(() => e.target.classList.add('visible'), i * 60);
+          observer.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.08 });
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+  </script>
+
+</body>
+</html>
